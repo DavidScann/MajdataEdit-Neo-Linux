@@ -235,7 +235,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(SimaiDiagnosticsCount))]
     IReadOnlyList<SimaiDiagnostic> simaiDiagnostics;
     [ObservableProperty]
-    List<(double, int, int)> signatures = new();
+    List<(double, int, int)> signatures = [(0, 4, 4)];
 
     bool _isBackToStartOnPlayStop = false;
     bool _isUpdatingAutoSaveContext = false;

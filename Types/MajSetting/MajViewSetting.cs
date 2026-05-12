@@ -72,6 +72,9 @@ public class MajViewSetting
 
     [SettingUnbrowsable]
     public UIType UIType { get; set; } = UIType.Legacy;
+
+    [SettingControl(SettingControlType.Numeric, Max = double.MaxValue, Min = 0, Step = 0.01)]
+    public double GlobalAudioOffset { get; set; } = 0;
 }
 
 public enum BgInfoDisplay
