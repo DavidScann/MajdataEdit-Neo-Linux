@@ -196,7 +196,7 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
-        ///   查找类似 Export Video 的本地化字符串。
+        ///   查找类似 Export Video From Here 的本地化字符串。
         /// </summary>
         internal static string Gui_ExportVideo {
             get {

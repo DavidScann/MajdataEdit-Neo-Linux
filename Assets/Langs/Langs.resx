@@ -145,7 +145,7 @@
     <value>Save</value>
   </data>
   <data name="Gui_ExportVideo" xml:space="preserve">
-    <value>Export Video</value>
+    <value>Export Video From Here</value>
   </data>
   <data name="Gui_Edit" xml:space="preserve">
     <value>Edit</value>

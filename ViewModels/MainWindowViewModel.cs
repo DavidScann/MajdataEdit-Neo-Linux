@@ -718,7 +718,7 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 return;
             }
-            TrackTime = 0;
+            //TrackTime = 0;
             playStartTime = TrackTime;
             _textEditor = textEditor;
             await _playerConnection.SettingAsync(Settings.ViewSetting, Settings.VolumeSetting);

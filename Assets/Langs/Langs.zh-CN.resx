@@ -145,7 +145,7 @@
     <value>保存</value>
   </data>
   <data name="Gui_ExportVideo" xml:space="preserve">
-    <value>导出视频</value>
+    <value>从此处导出视频</value>
   </data>
   <data name="Gui_Edit" xml:space="preserve">
     <value>编辑</value>
