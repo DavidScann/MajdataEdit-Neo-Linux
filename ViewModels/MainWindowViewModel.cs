@@ -588,12 +588,12 @@ public partial class MainWindowViewModel : ViewModelBase
         var mainWindow = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
         if (mainWindow is null || mainWindow.MainWindow is null) return;
         var window = new ChartInfoWindow();
-        window.DataContext = new ChartInfoViewModel()
+        window.DataContext = new ChartInfoViewModel(this)
         {
             Title = CurrentSimaiFile.Title,
             Artist = CurrentSimaiFile.Artist,
             FinalDesigner = CurrentSimaiFile.FinalDesigner,
-            SimaiCommands = new ObservableCollection<SimaiCommand>(CurrentSimaiFile.Commands),
+            SimaiCommands = [with(CurrentSimaiFile.Commands.Select(c => new MutSimaiCommand(c.Prefix, c.Value)))],
             MaidataDir = _maidataDir
         };
         await window.ShowDialog(mainWindow.MainWindow);
@@ -1220,6 +1220,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 await MessageBox.ShowWindowDialogAsync(
                     $"{Assets.Langs.Langs.Status_CompressComplete}\n{originalSize:F2}MB → {newSize:F2}MB",
                     "Success", icon: Icon.Success);
+                await ReloadFile();
             }
             else
             {

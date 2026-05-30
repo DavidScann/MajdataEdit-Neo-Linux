@@ -88,6 +88,15 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
+        ///   查找类似 Error 的本地化字符串。
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 About 的本地化字符串。
         /// </summary>
         internal static string Gui_About {
@@ -102,6 +111,15 @@ namespace MajdataEdit_Neo.Assets.Langs {
         internal static string Gui_Artist {
             get {
                 return ResourceManager.GetString("Gui_Artist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Beats 的本地化字符串。
+        /// </summary>
+        internal static string Gui_BeatsCount {
+            get {
+                return ResourceManager.GetString("Gui_BeatsCount", resourceCulture);
             }
         }
         
@@ -151,6 +169,15 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
+        ///   查找类似 Confirm 的本地化字符串。
+        /// </summary>
+        internal static string Gui_Confirm {
+            get {
+                return ResourceManager.GetString("Gui_Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Connected 的本地化字符串。
         /// </summary>
         internal static string Gui_Connected {
@@ -192,24 +219,6 @@ namespace MajdataEdit_Neo.Assets.Langs {
         internal static string Gui_Error {
             get {
                 return ResourceManager.GetString("Gui_Error", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Warning 的本地化字符串。
-        /// </summary>
-        internal static string Gui_Warning {
-            get {
-                return ResourceManager.GetString("Gui_Warning", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Success 的本地化字符串。
-        /// </summary>
-        internal static string Gui_Success {
-            get {
-                return ResourceManager.GetString("Gui_Success", resourceCulture);
             }
         }
         
@@ -259,11 +268,38 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
+        ///   查找类似 Freeze First Frame 的本地化字符串。
+        /// </summary>
+        internal static string Gui_FreezeFrame {
+            get {
+                return ResourceManager.GetString("Gui_FreezeFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Level 的本地化字符串。
         /// </summary>
         internal static string Gui_Level {
             get {
                 return ResourceManager.GetString("Gui_Level", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Media Quick Process 的本地化字符串。
+        /// </summary>
+        internal static string Gui_MediaQuickProcess {
+            get {
+                return ResourceManager.GetString("Gui_MediaQuickProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Adjust audio/video timing based on BPM and offset 的本地化字符串。
+        /// </summary>
+        internal static string Gui_MediaQuickProcessDesc {
+            get {
+                return ResourceManager.GetString("Gui_MediaQuickProcessDesc", resourceCulture);
             }
         }
         
@@ -300,6 +336,15 @@ namespace MajdataEdit_Neo.Assets.Langs {
         internal static string Gui_New {
             get {
                 return ResourceManager.GetString("Gui_New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 New Chart From Video 的本地化字符串。
+        /// </summary>
+        internal static string Gui_NewChartFromVideo {
+            get {
+                return ResourceManager.GetString("Gui_NewChartFromVideo", resourceCulture);
             }
         }
         
@@ -412,6 +457,15 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
+        ///   查找类似 Success 的本地化字符串。
+        /// </summary>
+        internal static string Gui_Success {
+            get {
+                return ResourceManager.GetString("Gui_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Tap 的本地化字符串。
         /// </summary>
         internal static string Gui_Tap {
@@ -437,58 +491,31 @@ namespace MajdataEdit_Neo.Assets.Langs {
                 return ResourceManager.GetString("Gui_Tools", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   查找类似 Beats 的本地化字符串。
+        ///   查找类似 Warning 的本地化字符串。
         /// </summary>
-        internal static string Gui_BeatsCount {
+        internal static string Gui_Warning {
             get {
-                return ResourceManager.GetString("Gui_BeatsCount", resourceCulture);
+                return ResourceManager.GetString("Gui_Warning", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   查找类似 Confirm 的本地化字符串。
+        ///   查找类似 bg.mp4 is too large, Compress? 的本地化字符串。
         /// </summary>
-        internal static string Gui_Confirm {
+        internal static string Msg_BgTooLarge {
             get {
-                return ResourceManager.GetString("Gui_Confirm", resourceCulture);
+                return ResourceManager.GetString("Msg_BgTooLarge", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   查找类似 Freeze First Frame 的本地化字符串。
+        ///   查找类似 Chart not yet saved. Save it now? 的本地化字符串。
         /// </summary>
-        internal static string Gui_FreezeFrame {
+        internal static string Msg_ChartNotSaved {
             get {
-                return ResourceManager.GetString("Gui_FreezeFrame", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Media Quick Process 的本地化字符串。
-        /// </summary>
-        internal static string Gui_MediaQuickProcess {
-            get {
-                return ResourceManager.GetString("Gui_MediaQuickProcess", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Adjust audio/video timing based on BPM and offset 的本地化字符串。
-        /// </summary>
-        internal static string Gui_MediaQuickProcessDesc {
-            get {
-                return ResourceManager.GetString("Gui_MediaQuickProcessDesc", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 New Chart From Video 的本地化字符串。
-        /// </summary>
-        internal static string Gui_NewChartFromVideo {
-            get {
-                return ResourceManager.GetString("Gui_NewChartFromVideo", resourceCulture);
+                return ResourceManager.GetString("Msg_ChartNotSaved", resourceCulture);
             }
         }
         
@@ -520,6 +547,51 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
+        ///   查找类似 Extract failed: {0} 的本地化字符串。
+        /// </summary>
+        internal static string Msg_ExtractAudioFailed {
+            get {
+                return ResourceManager.GetString("Msg_ExtractAudioFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Invalid Beats Count! 的本地化字符串。
+        /// </summary>
+        internal static string Msg_InvalidBeatsCount {
+            get {
+                return ResourceManager.GetString("Msg_InvalidBeatsCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Maidata Already Exist 的本地化字符串。
+        /// </summary>
+        internal static string Msg_MaidataAlreadyExist {
+            get {
+                return ResourceManager.GetString("Msg_MaidataAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Media processing complete 的本地化字符串。
+        /// </summary>
+        internal static string Msg_MediaProcessComplete {
+            get {
+                return ResourceManager.GetString("Msg_MediaProcessComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Adjust failed: {0} 的本地化字符串。
+        /// </summary>
+        internal static string Msg_MediaProcessFailed {
+            get {
+                return ResourceManager.GetString("Msg_MediaProcessFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 New Version detected: {0}
         ///(Current Version: {1})
         ///
@@ -532,33 +604,6 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
-        ///   查找类似 You are already at the latest version 的本地化字符串。
-        /// </summary>
-        internal static string Msg_NoNewVersion {
-            get {
-                return ResourceManager.GetString("Msg_NoNewVersion", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Maidata Already Exist 的本地化字符串。
-        /// </summary>
-        internal static string Msg_MaidataAlreadyExist {
-            get {
-                return ResourceManager.GetString("Msg_MaidataAlreadyExist", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Chart not yet saved. Save it now? 的本地化字符串。
-        /// </summary>
-        internal static string Msg_ChartNotSaved {
-            get {
-                return ResourceManager.GetString("Msg_ChartNotSaved", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   查找类似 Please enter &apos;(BPM){1},&apos; in the chart first! 的本地化字符串。
         /// </summary>
         internal static string Msg_NoBpmInChart {
@@ -566,40 +611,13 @@ namespace MajdataEdit_Neo.Assets.Langs {
                 return ResourceManager.GetString("Msg_NoBpmInChart", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   查找类似 Invalid Beats Count! 的本地化字符串。
+        ///   查找类似 You are already at the latest version 的本地化字符串。
         /// </summary>
-        internal static string Msg_InvalidBeatsCount {
+        internal static string Msg_NoNewVersion {
             get {
-                return ResourceManager.GetString("Msg_InvalidBeatsCount", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Media processing complete 的本地化字符串。
-        /// </summary>
-        internal static string Msg_MediaProcessComplete {
-            get {
-                return ResourceManager.GetString("Msg_MediaProcessComplete", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Adjust failed: {0} 的本地化字符串。
-        /// </summary>
-        internal static string Msg_MediaProcessFailed {
-            get {
-                return ResourceManager.GetString("Msg_MediaProcessFailed", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Extract failed: {0} 的本地化字符串。
-        /// </summary>
-        internal static string Msg_ExtractAudioFailed {
-            get {
-                return ResourceManager.GetString("Msg_ExtractAudioFailed", resourceCulture);
+                return ResourceManager.GetString("Msg_NoNewVersion", resourceCulture);
             }
         }
         
@@ -847,6 +865,15 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
+        ///   查找类似 Extracting audio... 的本地化字符串。
+        /// </summary>
+        internal static string Status_ExtractingAudio {
+            get {
+                return ResourceManager.GetString("Status_ExtractingAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Idle 的本地化字符串。
         /// </summary>
         internal static string Status_Idle {
@@ -881,24 +908,6 @@ namespace MajdataEdit_Neo.Assets.Langs {
                 return ResourceManager.GetString("Status_NoFfmpeg", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   查找类似 Processing media... 的本地化字符串。
-        /// </summary>
-        internal static string Status_Processing {
-            get {
-                return ResourceManager.GetString("Status_Processing", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 Extracting audio... 的本地化字符串。
-        /// </summary>
-        internal static string Status_ExtractingAudio {
-            get {
-                return ResourceManager.GetString("Status_ExtractingAudio", resourceCulture);
-            }
-        }
         
         /// <summary>
         ///   查找类似 Paused 的本地化字符串。
@@ -915,6 +924,15 @@ namespace MajdataEdit_Neo.Assets.Langs {
         internal static string Status_Playing {
             get {
                 return ResourceManager.GetString("Status_Playing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Processing media... 的本地化字符串。
+        /// </summary>
+        internal static string Status_Processing {
+            get {
+                return ResourceManager.GetString("Status_Processing", resourceCulture);
             }
         }
         

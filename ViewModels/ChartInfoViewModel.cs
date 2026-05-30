@@ -2,7 +2,11 @@
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MajdataEdit_Neo.Assets.Langs;
 using MajdataEdit_Neo.Models;
+using MajdataEdit_Neo.Types;
+using MajdataEdit_Neo.Utils;
+using MajdataEdit_Neo.Views;
 using MajSimai;
 using System;
 using System.Collections.ObjectModel;
@@ -14,6 +18,8 @@ namespace MajdataEdit_Neo.ViewModels;
 
 partial class ChartInfoViewModel : ViewModelBase
 {
+    private readonly MainWindowViewModel _main;
+
     [ObservableProperty]
     private string? title;
     [ObservableProperty]
@@ -22,7 +28,16 @@ partial class ChartInfoViewModel : ViewModelBase
     private string? finalDesigner;
 
     [ObservableProperty]
-    private ObservableCollection<SimaiCommand>? simaiCommands;
+    private ObservableCollection<MutSimaiCommand> simaiCommands = new();
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Cover))]
+    private string? maidataDir;
+
+    public ChartInfoViewModel(MainWindowViewModel main)
+    {
+        _main = main;
+    }
 
     public Bitmap Cover { 
         get
@@ -35,24 +50,11 @@ partial class ChartInfoViewModel : ViewModelBase
         } 
     }
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Cover))]
-    private string maidataDir;
-    public ChartInfoViewModel()
-    {
-        SimaiCommands = new();
-        SimaiCommands.Add(new SimaiCommand("aaa1", "bbb5"));
-        SimaiCommands.Add(new SimaiCommand("aaa2", "bbb6"));
-        SimaiCommands.Add(new SimaiCommand("aaa3", "bbb7"));
-        SimaiCommands.Add(new SimaiCommand("aaa4", "bbb8"));
-    }
-
     public void AddNewCommand()
     {
-        if (SimaiCommands is null) SimaiCommands = new();
-        SimaiCommands.Add(new SimaiCommand("prefix", "value"));
+        SimaiCommands.Add(new MutSimaiCommand("prefix", "value"));
     }
-    public void DelCommand(SimaiCommand command)
+    public void DelCommand(MutSimaiCommand command)
     {
         if (SimaiCommands is null) throw new InvalidOperationException();
         SimaiCommands.Remove(command);
@@ -89,9 +91,17 @@ partial class ChartInfoViewModel : ViewModelBase
             var path = file.TryGetLocalPath();
             if (path is null || MaidataDir is null) return;
             File.Delete(MaidataDir + "/bg.mp4");
+            File.Delete(MaidataDir + "/pv.mp4");
             File.Copy(path, MaidataDir + "/bg.mp4", true);
-            //TODO:Make it MessageBox
-            if (new FileInfo(path).Length > 20971520) Debug.WriteLine("File too large. Compress?");
+            if (new FileInfo(path).Length > 20971520)
+            {
+                var result = await MessageBox.ShowWindowDialogAsync(Langs.Msg_BgTooLarge, Langs.Gui_Warning,
+                    MsBox.Avalonia.Enums.ButtonEnum.YesNo, MsBox.Avalonia.Enums.Icon.Warning);
+                if (result == MsBox.Avalonia.Enums.ButtonResult.Yes)
+                {
+                    await _main.CompressBgVideo();
+                }
+            }
         }
         catch (Exception e)
         {
