@@ -11,20 +11,21 @@ using AvaloniaEdit.Folding;
 using AvaloniaEdit.TextMate;
 using AvaloniaEdit.Utils;
 using MajdataEdit_Neo.Controls;
+using MajdataEdit_Neo.Models;
 using MajdataEdit_Neo.Models.SimaiAnalyzer;
 using MajdataEdit_Neo.Types.MajSetting;
 using MajdataEdit_Neo.Types.SimaiAnalyzer;
 using MajdataEdit_Neo.ViewModels;
-using MajdataEdit_Neo.Models;
 using MsBox.Avalonia.Enums;
-using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TextMateSharp.Grammars;
 using TextMateSharp.Registry;
+using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
 
 namespace MajdataEdit_Neo.Views;
 
@@ -37,6 +38,10 @@ public partial class MainWindow : Window
 
     DispatcherTimer _debounceTimer;
     string? _currentTooltipMessage;
+
+    private readonly HashSet<Key> _pressedKeys = new();
+    bool isCtrlKeyDown => _pressedKeys.Contains(Key.LeftCtrl) || _pressedKeys.Contains(Key.RightCtrl);
+
     public MainWindow()
     {
         //pull up MajdataView
@@ -117,20 +122,18 @@ public partial class MainWindow : Window
 
     private void MainWindow_LostFocus(object? sender, RoutedEventArgs e)
     {
-        isCtrlKeyDown = false;
     }
-
-    bool isCtrlKeyDown = false;
 
     private void MainWindow_KeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
     {
-        isCtrlKeyDown = false;
+        _pressedKeys.Remove(e.Key);
     }
 
     private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
     {
-        isCtrlKeyDown = e.Key == Avalonia.Input.Key.LeftCtrl;
+        _pressedKeys.Add(e.Key);
     }
+
     private void Caret_PositionChanged(object? sender, System.EventArgs e)
     {
         var seek = textEditor.SelectionStart;
@@ -183,9 +186,12 @@ public partial class MainWindow : Window
 
     private void TextEditor_PreviewKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
     {
+        bool hasShift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
+        bool hasCtrl = e.KeyModifiers.HasFlag(KeyModifiers.Control);
+
         //fix: when selection is not empty, left/right key will move caret to start/end of selection,
         //instead of moving caret from the start by one char.
-        if (!textEditor.TextArea.Selection.IsEmpty)
+        if (!textEditor.TextArea.Selection.IsEmpty && !hasShift)
         {
             if (e.Key == Key.Right)
             {
@@ -202,6 +208,23 @@ public partial class MainWindow : Window
                 e.Handled = true;
             }
         }
+
+        //fix: SB avaloniaEdit ate my ctrl+up/down
+        if (hasCtrl && !hasShift)
+        {
+            if (e.Key == Key.Up)
+            {
+                textEditor.TextArea.Caret.Line = Math.Max(1, textEditor.TextArea.Caret.Line - 1);
+                textEditor.TextArea.Caret.BringCaretToView();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Down)
+            {
+                textEditor.TextArea.Caret.Line = Math.Min(textEditor.Document.LineCount, textEditor.TextArea.Caret.Line + 1);
+                textEditor.TextArea.Caret.BringCaretToView();
+                e.Handled = true;
+            }
+        }
     }
     private async void TextEditor_TextChanged(object? sender, System.EventArgs e)
     {
@@ -209,7 +232,7 @@ public partial class MainWindow : Window
         _debounceTimer.Start();
         await viewModel.SetFumenContent(((TextEditor)sender).Text);
         var seek = textEditor.SelectionStart;
-        viewModel.SetCaretTime(seek,false);
+        viewModel.SetCaretTime(seek, isCtrlKeyDown);
     }
     private void _debounceTimer_Tick(object? sender, EventArgs e)
     {
