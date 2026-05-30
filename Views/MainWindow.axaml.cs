@@ -108,11 +108,11 @@ public partial class MainWindow : Window
     bool haveAsked = false;
     private async void MainWindow_Closing(object? sender, WindowClosingEventArgs e)
     {
-        viewModel.SetWindowLastState(this);
-        viewModel.OnWindowClosing();
         if (haveAsked) return;
         e.Cancel = true;
         haveAsked = true;
+        viewModel.SetWindowLastState(this);
+        viewModel.OnWindowClosing();
         if (!await viewModel.AskSave())
         {
             Process.GetProcessesByName("MajdataView").FirstOrDefault()?.Kill();
