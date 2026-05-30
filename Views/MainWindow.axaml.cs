@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.CodeCompletion;
@@ -14,6 +15,9 @@ using MajdataEdit_Neo.Models.SimaiAnalyzer;
 using MajdataEdit_Neo.Types.MajSetting;
 using MajdataEdit_Neo.Types.SimaiAnalyzer;
 using MajdataEdit_Neo.ViewModels;
+using MajdataEdit_Neo.Models;
+using MsBox.Avalonia.Enums;
+using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -291,5 +295,161 @@ public partial class MainWindow : Window
         }
     }
 
+    private string GetFfmpegPath()
+    {
+        return Path.Combine(Environment.CurrentDirectory, "MajdataView_Data", "StreamingAssets", "ffmpeg.exe");
+    }
 
+    private async void MediaQuickProcess_Click(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (viewModel.CurrentChartData is null || viewModel.CurrentChartData.CommaTimings.Length == 0)
+            {
+                await Utils.MessageBox.ShowWindowDialogAsync(
+                    Assets.Langs.Langs.Msg_NoBpmInChart,
+                    Assets.Langs.Langs.Gui_Error,
+                    ButtonEnum.Ok, MsBoxIcon.Error);
+                return;
+            }
+
+            var firstTiming = viewModel.CurrentChartData.CommaTimings[0];
+            var bpm = firstTiming.Bpm;
+            var offset = viewModel.Offset;
+
+            var beatsCountBox = this.FindControl<NumericUpDown>("BeatsCountBox");
+            var freezeFrameCheckBox = this.FindControl<CheckBox>("FreezeFrameCheckBox");
+
+            if (beatsCountBox?.Value is null)
+            {
+                await Utils.MessageBox.ShowWindowDialogAsync(
+                    Assets.Langs.Langs.Msg_InvalidBeatsCount,
+                    Assets.Langs.Langs.Gui_Error,
+                    ButtonEnum.Ok, MsBoxIcon.Error);
+                return;
+            }
+
+            var beatsCount = (int)beatsCountBox.Value;
+            var freezeFrame = freezeFrameCheckBox?.IsChecked == true;
+            var ffmpegPath = GetFfmpegPath();
+
+            if (!File.Exists(ffmpegPath))
+            {
+                await Utils.MessageBox.ShowWindowDialogAsync(
+                    Assets.Langs.Langs.Status_NoFfmpeg,
+                    Assets.Langs.Langs.Gui_Error,
+                    ButtonEnum.Ok, MsBoxIcon.Error);
+                return;
+            }
+
+            var maidataDir = viewModel.MaidataDir;
+            var audioPath = Path.Combine(maidataDir, "track.mp3");
+            if (!File.Exists(audioPath))
+                audioPath = Path.Combine(maidataDir, "track.ogg");
+
+            viewModel.ShowStatusMessage(Assets.Langs.Langs.Status_Processing);
+
+            await Task.Run(() =>
+            {
+                TrackProcessor.AdjustMediaTime(ffmpegPath, audioPath, 60.0 / bpm * beatsCount, offset);
+
+                string? videoPath = null;
+                foreach (var name in new[] { "pv.mp4", "mv.mp4", "bg.mp4" })
+                {
+                    var dir = Path.Combine(maidataDir, name);
+                    if (File.Exists(dir))
+                    {
+                        videoPath = dir;
+                        break;
+                    }
+                }
+
+                if (videoPath != null)
+                {
+                    TrackProcessor.AdjustMediaTime(ffmpegPath, videoPath, 60.0 / bpm * beatsCount, offset, freezeFrame);
+                }
+            });
+
+            viewModel.Offset = 0;
+            viewModel.SaveFile();
+            await Task.Delay(30);
+            await viewModel.ReloadFile();
+
+            viewModel.ResetStatusMessage();
+            await Utils.MessageBox.ShowWindowDialogAsync(
+                Assets.Langs.Langs.Msg_MediaProcessComplete,
+                Assets.Langs.Langs.Gui_Success,
+                ButtonEnum.Ok, MsBoxIcon.Success);
+        }
+        catch (Exception ex)
+        {
+            viewModel.ResetStatusMessage();
+            await Utils.MessageBox.ShowWindowDialogAsync(
+                string.Format(Assets.Langs.Langs.Msg_MediaProcessFailed, ex.Message),
+                Assets.Langs.Langs.Gui_Error,
+                ButtonEnum.Ok, MsBoxIcon.Error);
+        }
+    }
+
+    private async void NewChartFromVideo_Click(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel is null) return;
+
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Select Video File",
+                FileTypeFilter = new[]
+                {
+                    new FilePickerFileType("Video Files") { Patterns = new[] { "*.mp4", "*.mkv", "*.avi", "*.mov", "*.flv", "*.wmv" } },
+                    new FilePickerFileType("All Files") { Patterns = new[] { "*.*" } }
+                },
+                AllowMultiple = false
+            });
+
+            if (files.Count == 0) return;
+
+            var file = files[0].TryGetLocalPath();
+            if (file is null) return;
+
+            var parent = Path.GetDirectoryName(file)!;
+            var newFile = Path.Combine(parent, "pv.mp4");
+
+            if (file != newFile)
+            {
+                if (File.Exists(newFile))
+                    File.Delete(newFile);
+                File.Move(file, newFile);
+            }
+
+            var ffmpegPath = GetFfmpegPath();
+            if (!File.Exists(ffmpegPath))
+            {
+                await Utils.MessageBox.ShowWindowDialogAsync(
+                    Assets.Langs.Langs.Status_NoFfmpeg,
+                    Assets.Langs.Langs.Gui_Error,
+                    ButtonEnum.Ok, MsBoxIcon.Error);
+                return;
+            }
+
+            viewModel.ShowStatusMessage(Assets.Langs.Langs.Status_ExtractingAudio);
+
+            var audioPath = Path.Combine(parent, "track.mp3");
+            await Task.Run(() => TrackProcessor.ExtractAudio(ffmpegPath, newFile, audioPath));
+
+            viewModel.ResetStatusMessage();
+            await viewModel.NewChart(parent);
+            viewModel.OpenChartInfoWindow();
+        }
+        catch (Exception ex)
+        {
+            viewModel.ResetStatusMessage();
+            await Utils.MessageBox.ShowWindowDialogAsync(
+                string.Format(Assets.Langs.Langs.Msg_ExtractAudioFailed, ex.Message),
+                Assets.Langs.Langs.Gui_Error,
+                ButtonEnum.Ok, MsBoxIcon.Error);
+        }
+    }
 }

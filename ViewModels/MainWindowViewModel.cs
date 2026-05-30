@@ -20,7 +20,6 @@ using MajdataEdit_Neo.Types.SimaiAnalyzer;
 using MajdataEdit_Neo.Utils;
 using MajdataEdit_Neo.Views;
 using MajSimai;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -181,6 +180,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(IsLoaded))]
     public partial SimaiFile? CurrentSimaiFile { get; set; } = null;
 
+    //timings only
     [ObservableProperty]
     public partial SimaiChart CurrentChartData { get; set; }
 
@@ -265,6 +265,7 @@ public partial class MainWindowViewModel : ViewModelBase
     DateTime _lastUpdateAutoSaveContextTime = DateTime.UnixEpoch;
 
     string _maidataDir = "";
+    public string MaidataDir => _maidataDir;
 
     readonly string[] _level = new string[7];
     readonly Lock _syncLock = new();
@@ -411,19 +412,17 @@ public partial class MainWindowViewModel : ViewModelBase
             var maidataPath = file.TryGetLocalPath();
             if (maidataPath is null) return;
             var fileInfo = new FileInfo(maidataPath);
-            _maidataDir = fileInfo.Directory.FullName;
-            if(File.Exists( _maidataDir + "/maidata.txt"))
+            var directory = fileInfo.Directory.FullName;
+            if(File.Exists(Path.Combine(directory, "maidata.txt")))
             {
-                var mainWindow = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-                await MessageBoxManager.GetMessageBoxStandard(
-                "Error", "Maidata Already Exist",
-                MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error)
-                .ShowWindowDialogAsync(mainWindow.MainWindow);
+                await Utils.MessageBox.ShowWindowDialogAsync(
+                    Langs.Msg_MaidataAlreadyExist,
+                    Langs.Gui_Error,
+                    ButtonEnum.Ok, Icon.Error);
+                await LoadChart(maidataPath);
                 return;
             }
-            CurrentSimaiFile = SimaiFile.Empty("Set Title", "Set Artist");
-            SongTrackInfo = _trackReader.ReadTrack(_maidataDir);
-            IsSaved = false;
+            await NewChart(directory);
             OpenChartInfoWindow();
         }
         catch (Exception e)
@@ -441,16 +440,7 @@ public partial class MainWindowViewModel : ViewModelBase
             var maidataPath = file.TryGetLocalPath();
             if (maidataPath is null) return;
 
-            CurrentSimaiFile = await SimaiParser.ParseAsync(new FileStream(maidataPath, FileMode.Open, FileAccess.Read));
-            
-            var fileInfo = new FileInfo(maidataPath);
-            _maidataDir = fileInfo.Directory.FullName;
-            SongTrackInfo = _trackReader.ReadTrack(_maidataDir);
-            _autoSaveManager.Enabled = true;
-            _internalAutoSaveContentProvider.Content = await File.ReadAllTextAsync(maidataPath);
-            UpdateAutoSaveContext();
-            //TODO: Reset view if already loaded?
-            await EditorLoad();
+            await LoadChart(maidataPath);
         }
         catch (Exception e)
         {
@@ -494,22 +484,12 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (!IsSaved)
         {
-            var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-            var msgBox = MessageBoxManager.GetMessageBoxStandard(
-                title: "Warning", 
-                text : "Chart not yet saved.\nSave it now?", 
-                @enum: ButtonEnum.YesNoCancel, 
-                icon : Icon.Warning);
-            ButtonResult result;
-            if (mainWindow is null)
-            {
-                result = await msgBox.ShowWindowAsync();
-            }
-            else
-            {
-                result = await msgBox.ShowWindowDialogAsync(mainWindow);
-            }
-            
+            var result = await Utils.MessageBox.ShowWindowDialogAsync(
+                Langs.Msg_ChartNotSaved,
+                Langs.Gui_Warning,
+                ButtonEnum.YesNoCancel,
+                Icon.Warning);
+
             switch (result)
             {
                 case ButtonResult.Yes:
@@ -526,16 +506,57 @@ public partial class MainWindowViewModel : ViewModelBase
     }
     public async void SaveFile()
     {
-        if (CurrentSimaiFile is null) 
+        if (CurrentSimaiFile is null)
             return;
         lock(_fumenContentChangedSyncLock)
         {
             IsFumenContextChanged = false;
             OriginFumen = CurrentFumen;
         }
-        await SimaiParser.DeparseAsync(CurrentSimaiFile, 
+        await SimaiParser.DeparseAsync(CurrentSimaiFile,
             new FileStream(_maidataDir + "/maidata.txt", FileMode.Create, FileAccess.Write));
     }
+
+    public async Task ReloadFile()
+    {
+        if (string.IsNullOrEmpty(_maidataDir)) return;
+        var maidataPath = Path.Combine(_maidataDir, "maidata.txt");
+        if (!File.Exists(maidataPath)) return;
+
+        await LoadChart(maidataPath);
+    }
+
+    /// <summary>
+    /// 初始化新谱面
+    /// </summary>
+    public async Task NewChart(string directory)
+    {
+        _maidataDir = directory;
+        File.Create(Path.Combine(_maidataDir, "maidata.txt"));
+        CurrentSimaiFile = SimaiFile.Empty("Set Title", "Set Artist");
+        SongTrackInfo = _trackReader.ReadTrack(_maidataDir);
+        IsSaved = false;
+        _autoSaveManager.Enabled = true;
+        _internalAutoSaveContentProvider.Content = "";
+        UpdateAutoSaveContext();
+        await EditorLoad();
+    }
+
+    /// <summary>
+    /// 加载已有谱面
+    /// </summary>
+    private async Task LoadChart(string maidataPath)
+    {
+        CurrentSimaiFile = await SimaiParser.ParseAsync(new FileStream(maidataPath, FileMode.Open, FileAccess.Read));
+        var fileInfo = new FileInfo(maidataPath);
+        _maidataDir = fileInfo.Directory.FullName;
+        SongTrackInfo = _trackReader.ReadTrack(_maidataDir);
+        _autoSaveManager.Enabled = true;
+        _internalAutoSaveContentProvider.Content = await File.ReadAllTextAsync(maidataPath);
+        UpdateAutoSaveContext();
+        await EditorLoad();
+    }
+
     public void OpenBpmTapWindow()
     {
         new BpmTapWindow().Show();

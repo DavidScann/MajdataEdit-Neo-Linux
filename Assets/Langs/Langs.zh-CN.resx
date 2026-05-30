@@ -363,4 +363,70 @@
   <data name="Set_UIType" xml:space="preserve">
     <value>UI皮肤</value>
   </data>
+  <data name="Gui_MediaQuickProcess" xml:space="preserve">
+    <value>媒体快速处理</value>
+  </data>
+  <data name="Gui_MediaQuickProcessDesc" xml:space="preserve">
+    <value>根据BPM和偏移调整音视频时间</value>
+  </data>
+  <data name="Gui_BeatsCount" xml:space="preserve">
+    <value>拍数</value>
+  </data>
+  <data name="Gui_FreezeFrame" xml:space="preserve">
+    <value>冻结首帧</value>
+  </data>
+  <data name="Gui_Confirm" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="Gui_Warning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="Gui_Success" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="Msg_MaidataAlreadyExist" xml:space="preserve">
+    <value>maidata.txt 已存在</value>
+  </data>
+  <data name="Msg_ChartNotSaved" xml:space="preserve">
+    <value>谱面尚未保存，是否现在保存？</value>
+  </data>
+  <data name="Msg_NoBpmInChart" xml:space="preserve">
+    <value>请先在谱面中输入 '(BPM){1},'！</value>
+  </data>
+  <data name="Msg_InvalidBeatsCount" xml:space="preserve">
+    <value>无效的拍数！</value>
+  </data>
+  <data name="Msg_MediaProcessComplete" xml:space="preserve">
+    <value>媒体处理完成</value>
+  </data>
+  <data name="Msg_MediaProcessFailed" xml:space="preserve">
+    <value>调整失败：{0}</value>
+  </data>
+  <data name="Msg_ExtractAudioFailed" xml:space="preserve">
+    <value>提取失败：{0}</value>
+  </data>
+  <data name="Status_Processing" xml:space="preserve">
+    <value>处理媒体中...</value>
+  </data>
+  <data name="Status_ExtractingAudio" xml:space="preserve">
+    <value>提取音频中...</value>
+  </data>
+  <data name="Gui_NewChartFromVideo" xml:space="preserve">
+    <value>从视频新建谱面</value>
+  </data>
+  <data name="Msg_NoBpmInChart" xml:space="preserve">
+    <value>请先在谱面中输入 '(BPM){1},'！</value>
+  </data>
+  <data name="Msg_MediaProcessComplete" xml:space="preserve">
+    <value>媒体处理完成</value>
+  </data>
+  <data name="Status_Processing" xml:space="preserve">
+    <value>处理媒体中...</value>
+  </data>
+  <data name="Status_ExtractingAudio" xml:space="preserve">
+    <value>提取音频中...</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
 </root>

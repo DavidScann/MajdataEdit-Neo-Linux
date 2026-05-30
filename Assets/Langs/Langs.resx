@@ -363,4 +363,70 @@ Do you want to download the latest update of Majdata?</value>
   <data name="Set_UIType" xml:space="preserve">
     <value>UI Type</value>
   </data>
+  <data name="Gui_MediaQuickProcess" xml:space="preserve">
+    <value>Media Quick Process</value>
+  </data>
+  <data name="Gui_MediaQuickProcessDesc" xml:space="preserve">
+    <value>Adjust audio/video timing based on BPM and offset</value>
+  </data>
+  <data name="Gui_BeatsCount" xml:space="preserve">
+    <value>Beats</value>
+  </data>
+  <data name="Gui_FreezeFrame" xml:space="preserve">
+    <value>Freeze First Frame</value>
+  </data>
+  <data name="Gui_Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Gui_Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Gui_Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="Msg_MaidataAlreadyExist" xml:space="preserve">
+    <value>Maidata Already Exist</value>
+  </data>
+  <data name="Msg_ChartNotSaved" xml:space="preserve">
+    <value>Chart not yet saved. Save it now?</value>
+  </data>
+  <data name="Msg_NoBpmInChart" xml:space="preserve">
+    <value>Please enter '(BPM){1},' in the chart first!</value>
+  </data>
+  <data name="Msg_InvalidBeatsCount" xml:space="preserve">
+    <value>Invalid Beats Count!</value>
+  </data>
+  <data name="Msg_MediaProcessComplete" xml:space="preserve">
+    <value>Media processing complete</value>
+  </data>
+  <data name="Msg_MediaProcessFailed" xml:space="preserve">
+    <value>Adjust failed: {0}</value>
+  </data>
+  <data name="Msg_ExtractAudioFailed" xml:space="preserve">
+    <value>Extract failed: {0}</value>
+  </data>
+  <data name="Status_Processing" xml:space="preserve">
+    <value>Processing media...</value>
+  </data>
+  <data name="Status_ExtractingAudio" xml:space="preserve">
+    <value>Extracting audio...</value>
+  </data>
+  <data name="Gui_NewChartFromVideo" xml:space="preserve">
+    <value>New Chart From Video</value>
+  </data>
+  <data name="Msg_NoBpmInChart" xml:space="preserve">
+    <value>Please enter '(BPM){1},' in the chart first!</value>
+  </data>
+  <data name="Msg_MediaProcessComplete" xml:space="preserve">
+    <value>Media processing complete</value>
+  </data>
+  <data name="Status_Processing" xml:space="preserve">
+    <value>Processing media...</value>
+  </data>
+  <data name="Status_ExtractingAudio" xml:space="preserve">
+    <value>Extracting audio...</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
 </root>
