@@ -284,7 +284,7 @@
                    HorizontalAlignment="Right"
                    Margin="0 0 -30 100" ZIndex="-9999"
                    Opacity="0.5"
-                   Source="avares://MajdataEdit-Neo/Assets/xxlb.png"></Image>
+                   Source="{Binding BackgroundImage}"></Image>
         </DockPanel>
 
     </Panel>

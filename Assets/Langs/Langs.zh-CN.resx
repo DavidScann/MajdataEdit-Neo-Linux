@@ -426,4 +426,7 @@
   <data name="Set_ButtonFirst" xml:space="preserve">
     <value>DJAuto按键优先</value>
   </data>
+  <data name="Set_BackgroundImagePath" xml:space="preserve">
+    <value>编辑器背景图片</value>
+  </data>
 </root>

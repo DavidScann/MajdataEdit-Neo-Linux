@@ -2,6 +2,8 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using AvaloniaEdit;
@@ -46,6 +48,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public static readonly string MAJDATA_VERSION_STRING = $"v{Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}";
     public static readonly SemVersion MAJDATA_VERSION = SemVersion.Parse(MAJDATA_VERSION_STRING, SemVersionStyles.Any);
+
     //------control panel
     public string DisplayTime
     {
@@ -248,6 +251,8 @@ public partial class MainWindowViewModel : ViewModelBase
     List<(double, int, int)> signatures = [(0, 4, 4)];
     [ObservableProperty]
     bool isCheckingUpdate;
+    [ObservableProperty]
+    Bitmap backgroundImage;
 
     // 状态栏：当前View状态（响应式更新）
     [ObservableProperty]
@@ -299,6 +304,9 @@ public partial class MainWindowViewModel : ViewModelBase
     IAutoSaveRecoverer _autoSaveRecoverer;
 
     bool _isLastPlayIncludeOp;
+
+    //Bitmap太性情了 都不给一张Bitmap.Empty滚木
+    private static readonly WriteableBitmap emptyBitmap = new(new PixelSize(1, 1), new Vector(96, 96), PixelFormat.Bgra8888);
 
     const int AUTOSAVE_CONTEXT_UPDATE_INTERVAL_MS = 5000;
     const string SETTINGS_FILENAME = "EditorSetting.json";
@@ -1063,6 +1071,14 @@ public partial class MainWindowViewModel : ViewModelBase
         I18N.Ins.Culture = new CultureInfo(Settings.EditSetting.Language);
         FontSize = Settings.EditSetting.FontSize;
         IsAnimated = Settings.EditSetting.WaveAnimated;
+        if (File.Exists(Settings.EditSetting.BackgroundImagePath))
+        {
+            BackgroundImage = new Bitmap(Settings.EditSetting.BackgroundImagePath);
+        }
+        else
+        {
+            BackgroundImage = emptyBitmap;
+        }
     }
 
     public void SetWindowLastState(Window window)

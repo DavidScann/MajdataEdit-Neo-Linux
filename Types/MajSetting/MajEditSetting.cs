@@ -22,4 +22,7 @@ public class MajEditSetting
     [Display(Name = nameof(Langs.Set_WaveAnimated))]
     [SettingControl(SettingControlType.Toggle)]
     public bool WaveAnimated { get; set; } = true;
+
+    [Display(Name = nameof(Langs.Set_BackgroundImagePath))]
+    public string BackgroundImagePath { get; set; } = "xxlb.png";
 }

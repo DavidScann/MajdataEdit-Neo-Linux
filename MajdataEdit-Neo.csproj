@@ -71,6 +71,12 @@
     </None>
   </ItemGroup>
 
+    <ItemGroup>
+	    <None Update="xxlb.png">
+		    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    </None>
+    </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Assets\Modules\" />
   </ItemGroup>

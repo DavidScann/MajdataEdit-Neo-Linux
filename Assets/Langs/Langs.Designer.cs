@@ -658,6 +658,15 @@ namespace MajdataEdit_Neo.Assets.Langs {
         }
         
         /// <summary>
+        ///   查找类似 Editor Background Image 的本地化字符串。
+        /// </summary>
+        internal static string Set_BackgroundImagePath {
+            get {
+                return ResourceManager.GetString("Set_BackgroundImagePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Break 的本地化字符串。
         /// </summary>
         internal static string Set_Break {
