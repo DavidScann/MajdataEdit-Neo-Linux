@@ -120,7 +120,9 @@ public partial class MainWindowViewModel : ViewModelBase
             OnPropertyChanged(nameof(CurrentSimaiFile));
         }
     }
-    public int SimaiDiagnosticsCount => SimaiDiagnostics?.Count ?? 0;
+    public int SimaiDiagnosticsCount => 
+        SimaiDiagnostics?.Count(o => o.Severity == Severity.Error) ?? 0;
+
     //------window state
     public bool IsLoaded
     {
