@@ -179,8 +179,17 @@ public partial class MainWindow : Window
 
     private void Speed_PointerWheelChanged(object? sender, Avalonia.Input.PointerWheelEventArgs e)
     {
-        Speed.Value += (decimal)(e.Delta.Y / 10d);
-        e.Handled = true;
+        var value = Speed.Value + (decimal)(e.Delta.Y / 10d);
+        if (value < (decimal)0.1)
+        {
+            e.Handled = true;
+            return;
+        }
+        else
+        {
+            Speed.Value = value;
+            e.Handled = true;
+        }
     }
 
     private void SimaiVisual_PointerWheelChanged(object? sender, Avalonia.Input.PointerWheelEventArgs e)
