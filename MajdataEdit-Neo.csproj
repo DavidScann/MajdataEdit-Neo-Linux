@@ -63,10 +63,11 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-	  <None Update="bass.dll">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+	<ItemGroup>
+		<Content Include="runtimes\**" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
     <None Update="simai.tmLanguage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
