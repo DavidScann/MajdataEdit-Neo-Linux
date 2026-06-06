@@ -46,8 +46,8 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
-        var isMacOrLinux = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
-                           RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        var isMacOrLinux = OperatingSystem.IsMacOS() ||
+                           OperatingSystem.IsLinux();
         //pull up MajdataView
         var viewPath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,

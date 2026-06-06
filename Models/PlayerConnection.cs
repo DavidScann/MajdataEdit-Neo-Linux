@@ -174,6 +174,7 @@ internal class PlayerConnection : IDisposable
             if (ViewSummary.State is ViewStatus.Paused or ViewStatus.Playing)
             {
                 OnStopRequired?.Invoke(this, new EventArgs());
+                await Task.Delay(114); //wait for stop
             }
             else
             {
