@@ -4,6 +4,8 @@ using MajdataEdit_Neo.Utils;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using MajdataEdit_Neo.ViewModels;
+using MajdataEdit_Neo.Views;
 
 namespace MajdataEdit_Neo;
 
@@ -24,7 +26,7 @@ sealed class Program
 
     static void LogCrashed(Exception ex)
     {
-        File.WriteAllText("crash.log", $"{ex.Message}\n{ex.StackTrace}\n\n" +
+        File.WriteAllText(MainWindowViewModel.CrashFile, $"{ex.Message}\n{ex.StackTrace}\n\n" +
             $"inner:{ex.InnerException?.Message}\n{ex.InnerException?.StackTrace}");
     }
 

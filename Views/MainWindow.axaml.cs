@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TextMateSharp.Grammars;
 using TextMateSharp.Registry;
@@ -45,10 +46,12 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        var isMacOrLinux = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
+                           RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
         //pull up MajdataView
         var viewPath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,
-            "MajdataView.exe");
+            isMacOrLinux ? "MajdataView" : "MajdataView.exe");
 
         if (File.Exists(viewPath) &&
             Process.GetProcessesByName("MajdataView").Length <= 0 &&

@@ -179,7 +179,7 @@ internal class AutoSaveIndexManager : IAutoSaveIndexManager
 
         var jsonText = File.ReadAllText(indexPath);
         //index = JsonConvert.DeserializeObject<AutoSaveIndex>(jsonText);
-        _index = JsonSerializer.Deserialize<AutoSaveIndex>(jsonText);
+        _index = JsonSerializer.Deserialize<AutoSaveIndex>(jsonText, AutoSaveIndexJsonContext.Default.AutoSaveIndex);
     }
 
     /// <summary>

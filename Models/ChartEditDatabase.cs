@@ -8,7 +8,7 @@ public class ChartEditDatabase : IDisposable
     private readonly SqliteConnection _connection;
     private bool _disposed;
 
-    public ChartEditDatabase(string dbPath = "chart_edit.db")
+    public ChartEditDatabase(string dbPath)
     {
         _connection = new SqliteConnection($"Data Source={dbPath}");
         _connection.Open();

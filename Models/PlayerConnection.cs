@@ -43,6 +43,7 @@ internal class PlayerConnection : IDisposable
         {
             new JsonStringEnumConverter()
         },
+        TypeInfoResolver = MajWsJsonContext.Default
     };
     public async Task<bool> ConnectAsync(string url = "ws://127.0.0.1:8083/majdata")
     {

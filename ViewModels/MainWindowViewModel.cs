@@ -313,7 +313,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     TextEditor _textEditor;
 
-    ChartEditDatabase _editDb = new();
+    ChartEditDatabase _editDb = new(DatabaseFile);
     EditTimer _editTimer = new();
 
     PlayerConnection _playerConnection = new PlayerConnection();
@@ -330,7 +330,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private static readonly WriteableBitmap emptyBitmap = new(new PixelSize(1, 1), new Vector(96, 96), PixelFormat.Bgra8888);
 
     const int AUTOSAVE_CONTEXT_UPDATE_INTERVAL_MS = 5000;
-    const string SETTINGS_FILENAME = "EditorSetting.json";
+
+    public static string SettingsFile => GetPath("Settings.json");
+    public static string CrashFile => GetPath("crash.log");
+    public static string DatabaseFile => GetPath("editor.db");
+    
     public MainWindowViewModel()
     {
         Ins = this;
@@ -386,7 +390,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// returns raw postion in chart
+    /// returns raw position in chart
     /// </summary>
     /// <param name="delta"></param>
     /// <returns></returns>
@@ -1093,15 +1097,15 @@ public partial class MainWindowViewModel : ViewModelBase
     private void CreateSettings()
     {
         Settings = new MajSetting();
-        File.WriteAllText(SETTINGS_FILENAME, JsonConvert.SerializeObject(Settings, Formatting.Indented));
+        File.WriteAllText(SettingsFile, JsonConvert.SerializeObject(Settings, Formatting.Indented));
 
         OpenSettingsWindow();
     }
 
     private void ReadSettings()
     {
-        if (!File.Exists(SETTINGS_FILENAME)) CreateSettings();
-        var json = File.ReadAllText(SETTINGS_FILENAME);
+        if (!File.Exists(SettingsFile)) CreateSettings();
+        var json = File.ReadAllText(SettingsFile);
         Settings = JsonConvert.DeserializeObject<MajSetting>(json)!;
 
         ReloadSettings();
@@ -1138,7 +1142,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void SaveSettings()
     {
-        File.WriteAllText(SETTINGS_FILENAME, JsonConvert.SerializeObject(Settings, Formatting.Indented));
+        File.WriteAllText(SettingsFile, JsonConvert.SerializeObject(Settings, Formatting.Indented));
     }
 
     public async Task CheckUpdateAsync(bool onStart = false)
@@ -1365,6 +1369,9 @@ public partial class MainWindowViewModel : ViewModelBase
             return "ERROR";
         }
     }
+
+    public static string GetPath(string relativePath) => 
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
 
 
     class InternalAutoSaveContext : IAutoSaveContext, IAutoSaveContentProvider<string>
