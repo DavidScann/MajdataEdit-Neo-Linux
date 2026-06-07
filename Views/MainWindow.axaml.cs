@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using MajdataEdit_Neo.Base;
 using TextMateSharp.Grammars;
 using TextMateSharp.Registry;
 using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
@@ -49,8 +50,7 @@ public partial class MainWindow : Window
         var isMacOrLinux = OperatingSystem.IsMacOS() ||
                            OperatingSystem.IsLinux();
         //pull up MajdataView
-        var viewPath = Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory,
+        var viewPath = Path.Combine(MajEnv.MajBase,
             isMacOrLinux ? "MajdataView" : "MajdataView.exe");
 
         if (File.Exists(viewPath) &&

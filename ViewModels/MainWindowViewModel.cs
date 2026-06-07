@@ -32,6 +32,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -39,6 +40,7 @@ using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using MajdataEdit_Neo.Base;
 
 namespace MajdataEdit_Neo.ViewModels;
 
@@ -212,8 +214,8 @@ public partial class MainWindowViewModel : ViewModelBase
     }
     public async Task SetFumenContent(string content)
     {
-        if (string.IsNullOrWhiteSpace(content)) return;
         if (CurrentSimaiFile is null) return;
+        content ??= string.Empty;
 
         CurrentChartMetadata[SelectedDifficulty].Fumen = content;
         OnPropertyChanged(nameof(CurrentSimaiFile));
@@ -844,33 +846,32 @@ public partial class MainWindowViewModel : ViewModelBase
         IsPlayControlEnabled = true;
         await Task.Run(async () =>
         {
-            bool recoverIsAnimated = IsAnimated;
-            Stopwatch watch = new();
-            if (_isLastPlayIncludeOp == true) 
-                await Task.Delay(5000); //wait for songdetail
-            watch.Start();
-            var timeA = watch.Elapsed;
+            var recoverIsAnimated = IsAnimated;
             IsAnimated = false;
-            var speed = PlaybackSpeed;
+            
+#if DEBUG
+            var mmfAudioTimePath = Path.Combine("/Users/re_poem/repos/MajdataViewX", "majdata_time.dat");
+#else
+            var mmfAudioTimePath = Path.Combine(MajEnv.MajBase, "majdata_time.dat");
+#endif
+            using var mmfAudioTime = MemoryMappedFile.CreateFromFile(mmfAudioTimePath, FileMode.Open);
+            using var mmvAudioTime = mmfAudioTime.CreateViewAccessor();
+            
             while (_playerConnection.ViewSummary.State == ViewStatus.Playing &&
-                    _playerConnection.IsConnected)
+                   _playerConnection.IsConnected)
             {
-                TrackTime = watch.ElapsedMilliseconds / 1000d * speed + playStartTime;
+                TrackTime = mmvAudioTime.ReadSingle(0);
                 if (IsFollowCursor)
                 {
                     var nearestNote = CurrentChartData.CommaTimings.LastOrDefault(o => TrackTime - (o.Timing + Offset) > 0);
                     if (nearestNote is null) continue;
-
+                
                     var point = new Point(nearestNote.RawTextPositionX, nearestNote.RawTextPositionY - 1);
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         SeekToDocPos(point, _textEditor);
                     });
-
                 }
-                var timeB = watch.Elapsed;
-                var waitTime = Math.Max(16 - (int)(timeB - timeA).TotalMilliseconds, 0);
-                await Task.Delay(waitTime);
             }
             if (recoverIsAnimated)
                 IsAnimated = true;
