@@ -10,7 +10,7 @@ public static class TrackProcessor
     {
         if (!File.Exists(videoPath)) return;
 
-        string args = $"-y -i \"{videoPath}\" -vn -ar 44100 -acodec libmp3lame -q:a 2 \"{audioOutputPath}\"";
+        var args = $"-y -i \"{videoPath}\" -vn -ar 44100 -acodec libmp3lame -q:a 2 \"{audioOutputPath}\"";
         RunFFmpeg(ffmpegPath, args);
     }
 
@@ -18,19 +18,19 @@ public static class TrackProcessor
     {
         if (!File.Exists(filePath)) return;
 
-        double diff = targetTime - offset;
+        var diff = targetTime - offset;
         if (Math.Abs(diff) < 0.01) return;
 
-        string ext = Path.GetExtension(filePath).ToLower();
-        bool isAudio = ext == ".mp3" || ext == ".wav" || ext == ".ogg" || ext == ".flac";
-        string audioCodec = (ext == ".mp3") ? "libmp3lame" : "aac";
+        var ext = Path.GetExtension(filePath).ToLower();
+        var isAudio = ext == ".mp3" || ext == ".wav" || ext == ".ogg" || ext == ".flac";
+        var audioCodec = (ext == ".mp3") ? "libmp3lame" : "aac";
 
-        string tempPath = Path.Combine(Path.GetDirectoryName(filePath)!, $"t_{Guid.NewGuid()}{ext}");
-        string args;
-
+        var tempPath = Path.Combine(Path.GetDirectoryName(filePath)!, $"t_{Guid.NewGuid()}{ext}");
+        string args; 
+        
         if (diff < 0)
         {
-            double cut = Math.Abs(diff);
+            var cut = Math.Abs(diff);
             if (isAudio)
                 args = $"-y -i \"{filePath}\" -ss {cut} -c:a {audioCodec} \"{tempPath}\"";
             else
@@ -38,7 +38,7 @@ public static class TrackProcessor
         }
         else
         {
-            double delayMs = diff * 1000;
+            var delayMs = diff * 1000;
             if (isAudio)
             {
                 args = $"-y -i \"{filePath}\" -af \"adelay={delayMs}:all=1\" -c:a {audioCodec} \"{tempPath}\"";
@@ -46,9 +46,23 @@ public static class TrackProcessor
             else
             {
                 if (clone)
-                    args = $"-y -i \"{filePath}\" -filter_complex \"[0:v]tpad=start_duration={diff}:start_mode=clone[v];[0:a]adelay={delayMs}:all=1[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -c:a {audioCodec} -preset superfast \"{tempPath}\"";
+                {
+                    args =
+                        $"-y -i \"{filePath}\" " +
+                        $"-vf \"tpad=start_duration={diff}:start_mode=clone\" " +
+                        $"-an " +
+                        $"-c:v libx264 -preset superfast " +
+                        $"\"{tempPath}\"";
+                }
                 else
-                    args = $"-y -i \"{filePath}\" -filter_complex \"[0:v]tpad=start_duration={diff}:start_mode=add[v];[0:a]adelay={delayMs}:all=1[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -c:a {audioCodec} -preset superfast \"{tempPath}\"";
+                {
+                    args =
+                        $"-y -i \"{filePath}\" " +
+                        $"-vf \"tpad=start_duration={diff}:start_mode=add\" " +
+                        $"-an " +
+                        $"-c:v libx264 -preset superfast " +
+                        $"\"{tempPath}\"";
+                }
             }
         }
 
@@ -73,7 +87,7 @@ public static class TrackProcessor
 
     static void RunFFmpeg(string ffmpegPath, string arguments)
     {
-        using Process process = new()
+        using var process = new Process
         {
             StartInfo = new ProcessStartInfo
             {
@@ -86,7 +100,7 @@ public static class TrackProcessor
         };
 
         process.Start();
-        string error = process.StandardError.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
         process.WaitForExit();
 
         if (process.ExitCode != 0) throw new Exception($"FFmpeg Error: {error}");

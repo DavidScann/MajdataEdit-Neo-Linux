@@ -284,7 +284,8 @@
             <Button IsVisible="False" HotKey="Ctrl+U" CommandParameter="{Binding #Editor}" Command="{Binding Turn45}"/>
             <Button IsVisible="False" HotKey="Ctrl+I" CommandParameter="{Binding #Editor}" Command="{Binding TurnNegative45}"/>
             <Button IsVisible="False" HotKey="Ctrl+S"  Command="{Binding SaveFile}"/>
-            <Button IsVisible="False" HotKey="Ctrl+O" Command="{Binding OpenFile}"/>
+            <Button IsVisible="False" HotKey="Ctrl+O" Command="{Binding IncreasePlaybackSpeed}"/>
+            <Button IsVisible="False" HotKey="Ctrl+P" Command="{Binding DecreasePlaybackSpeed}"/>
             <Button IsVisible="False" IsEnabled="{Binding IsPlayControlEnabled}" HotKey="Ctrl+Shift+C" Command="{Binding PlayStop}" CommandParameter="{Binding #Editor}"/>
         </Grid>
         <DockPanel >

@@ -29,6 +29,7 @@ using MajdataEdit_Neo.Base;
 using TextMateSharp.Grammars;
 using TextMateSharp.Registry;
 using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
+using static MajdataEdit_Neo.Utils.FFmpegChecker;
 
 namespace MajdataEdit_Neo.Views;
 
@@ -47,17 +48,25 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
-        var isMacOrLinux = OperatingSystem.IsMacOS() ||
-                           OperatingSystem.IsLinux();
+        var isMac =  OperatingSystem.IsMacOS();
+        var isLinux = OperatingSystem.IsLinux();
+        
         //pull up MajdataView
         var viewPath = Path.Combine(MajEnv.MajBase,
-            isMacOrLinux ? "MajdataView" : "MajdataView.exe");
-
+            isMac || isLinux ? "MajdataView" : "MajdataView.exe");
         if (File.Exists(viewPath) &&
             Process.GetProcessesByName("MajdataView").Length <= 0 &&
             Process.GetProcessesByName("Unity").Length <= 0)
         {
             Process.Start(viewPath);
+        }
+
+        // 补全 Mac 常见的环境变量路径（Homebrew 在 Intel 和 Apple Silicon 的路径不同）
+        if (isMac)
+        {
+            var currentPath = Environment.GetEnvironmentVariable("PATH");
+            var extraPath = "/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin";
+            Environment.SetEnvironmentVariable("PATH", $"{currentPath}:{extraPath}");
         }
 
         InitializeComponent();
@@ -345,11 +354,6 @@ public partial class MainWindow : Window
         }
     }
 
-    private string GetFfmpegPath()
-    {
-        return Path.Combine(Environment.CurrentDirectory, "MajdataView_Data", "StreamingAssets", "ffmpeg.exe");
-    }
-
     private async void MediaQuickProcess_Click(object? sender, RoutedEventArgs e)
     {
         try
@@ -381,16 +385,8 @@ public partial class MainWindow : Window
 
             var beatsCount = (int)beatsCountBox.Value;
             var freezeFrame = freezeFrameCheckBox?.IsChecked == true;
-            var ffmpegPath = GetFfmpegPath();
-
-            if (!File.Exists(ffmpegPath))
-            {
-                await Utils.MessageBox.ShowWindowDialogAsync(
-                    Assets.Langs.Langs.Status_NoFfmpeg,
-                    Assets.Langs.Langs.Gui_Error,
-                    ButtonEnum.Ok, MsBoxIcon.Error);
-                return;
-            }
+            
+            if (!await EnsureFFmpeg()) return;
 
             var maidataDir = viewModel.MaidataDir;
             var audioPath = Path.Combine(maidataDir, "track.mp3");
@@ -401,7 +397,7 @@ public partial class MainWindow : Window
 
             await Task.Run(() =>
             {
-                TrackProcessor.AdjustMediaTime(ffmpegPath, audioPath, 60.0 / bpm * beatsCount, offset);
+                TrackProcessor.AdjustMediaTime("ffmpeg", audioPath, 60.0 / bpm * beatsCount, offset);
 
                 string? videoPath = null;
                 foreach (var name in new[] { "pv.mp4", "mv.mp4", "bg.mp4" })
@@ -416,7 +412,7 @@ public partial class MainWindow : Window
 
                 if (videoPath != null)
                 {
-                    TrackProcessor.AdjustMediaTime(ffmpegPath, videoPath, 60.0 / bpm * beatsCount, offset, freezeFrame);
+                    TrackProcessor.AdjustMediaTime("ffmpeg", videoPath, 60.0 / bpm * beatsCount, offset, freezeFrame);
                 }
             });
 
@@ -474,20 +470,12 @@ public partial class MainWindow : Window
                 File.Move(file, newFile);
             }
 
-            var ffmpegPath = GetFfmpegPath();
-            if (!File.Exists(ffmpegPath))
-            {
-                await Utils.MessageBox.ShowWindowDialogAsync(
-                    Assets.Langs.Langs.Status_NoFfmpeg,
-                    Assets.Langs.Langs.Gui_Error,
-                    ButtonEnum.Ok, MsBoxIcon.Error);
-                return;
-            }
+            if (!await EnsureFFmpeg()) return;
 
             viewModel.ShowStatusMessage(Assets.Langs.Langs.Status_ExtractingAudio);
 
             var audioPath = Path.Combine(parent, "track.mp3");
-            await Task.Run(() => TrackProcessor.ExtractAudio(ffmpegPath, newFile, audioPath));
+            await Task.Run(() => TrackProcessor.ExtractAudio("ffmpeg", newFile, audioPath));
 
             viewModel.ResetStatusMessage();
             await viewModel.NewChart(parent);

@@ -41,6 +41,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using MajdataEdit_Neo.Base;
+using static MajdataEdit_Neo.Utils.FFmpegChecker;
 
 namespace MajdataEdit_Neo.ViewModels;
 
@@ -714,6 +715,9 @@ public partial class MainWindowViewModel : ViewModelBase
         editor.SelectedText = SimaiSubdivide.Subdivide(editor.SelectedText, 2f);
     }
 
+    public void IncreasePlaybackSpeed() => PlaybackSpeed += 0.1f;
+    public void DecreasePlaybackSpeed() => PlaybackSpeed -= 0.1f;
+
     public async void PlayPause(TextEditor textEditor)
     {
         bool shouldRecoverPlayControl = true;
@@ -1270,24 +1274,19 @@ public partial class MainWindowViewModel : ViewModelBase
             await MessageBox.ShowWindowDialogAsync(Assets.Langs.Langs.Status_NoBgVideo, "Error", icon: Icon.Error);
             return;
         }
+        
+        if (!await EnsureFFmpeg()) return;
 
         var videoFileName = Path.GetFileName(bgVideoPath); // "bg.mp4" 或 "pv.mp4"
         var videoBaseName = Path.GetFileNameWithoutExtension(bgVideoPath); // "bg" 或 "pv"
-
-        var ffmpegPath = Path.Combine(Environment.CurrentDirectory, "MajdataView_Data", "StreamingAssets", "ffmpeg.exe");
-        if (!File.Exists(ffmpegPath))
-        {
-            await MessageBox.ShowWindowDialogAsync(Assets.Langs.Langs.Status_NoFfmpeg, "Error", icon: Icon.Error);
-            return;
-        }
-
+        
         var outputPath = Path.Combine(_maidataDir, $"{videoBaseName}_compressed.mp4");
 
         ShowStatusMessage(Assets.Langs.Langs.Status_Compressing);
 
         try
         {
-            var success = await Task.Run(() => RunFfmpegCompress(ffmpegPath, bgVideoPath, outputPath));
+            var success = await Task.Run(() => RunFfmpegCompress("ffmpeg", bgVideoPath, outputPath));
 
             if (success && File.Exists(outputPath))
             {
