@@ -41,6 +41,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using MajdataEdit_Neo.Base;
+using static MajdataEdit_Neo.Base.MajEnv;
 using static MajdataEdit_Neo.Utils.FFmpegChecker;
 
 namespace MajdataEdit_Neo.ViewModels;
@@ -1123,14 +1124,8 @@ public partial class MainWindowViewModel : ViewModelBase
         I18N.Ins.Culture = new CultureInfo(Settings.EditSetting.Language);
         FontSize = Settings.EditSetting.FontSize;
         IsAnimated = Settings.EditSetting.WaveAnimated;
-        if (File.Exists(Settings.EditSetting.BackgroundImagePath))
-        {
-            BackgroundImage = new Bitmap(Settings.EditSetting.BackgroundImagePath);
-        }
-        else
-        {
-            BackgroundImage = emptyBitmap;
-        }
+        var bgPath = GetPath(Settings.EditSetting.BackgroundImagePath);
+        BackgroundImage = File.Exists(bgPath) ? new Bitmap(bgPath) : emptyBitmap;
     }
 
     public void SetWindowLastState(Window window)
@@ -1369,10 +1364,6 @@ public partial class MainWindowViewModel : ViewModelBase
             return "ERROR";
         }
     }
-
-    public static string GetPath(string relativePath) => 
-        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
-
 
     class InternalAutoSaveContext : IAutoSaveContext, IAutoSaveContentProvider<string>
     {

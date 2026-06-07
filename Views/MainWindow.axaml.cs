@@ -29,6 +29,7 @@ using MajdataEdit_Neo.Base;
 using TextMateSharp.Grammars;
 using TextMateSharp.Registry;
 using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
+using static MajdataEdit_Neo.Base.MajEnv;
 using static MajdataEdit_Neo.Utils.FFmpegChecker;
 
 namespace MajdataEdit_Neo.Views;
@@ -48,12 +49,13 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        Console.WriteLine(MajBase);
+        
         var isMac =  OperatingSystem.IsMacOS();
         var isLinux = OperatingSystem.IsLinux();
         
         //pull up MajdataView
-        var viewPath = Path.Combine(MajEnv.MajBase,
-            isMac || isLinux ? "MajdataView" : "MajdataView.exe");
+        var viewPath = GetPath(isMac || isLinux ? "MajdataView" : "MajdataView.exe");
         if (File.Exists(viewPath) &&
             Process.GetProcessesByName("MajdataView").Length <= 0 &&
             Process.GetProcessesByName("Unity").Length <= 0)
