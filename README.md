@@ -1,0 +1,1 @@
+I'll release drop-in Actions packages that compiles for Linux for MajdataEdit-Neo along with a separate branch for some other opinionated changes (e.g. Opus audio, ability to swap out mascot image, etc.)
